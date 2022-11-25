@@ -9,7 +9,41 @@ namespace RecetaParser
 {
     internal class AnalizadorReceta : ProyectoRecetarioBaseVisitor<string>
     {
-        public override string VisitInformacion([NotNull] ProyectoRecetarioParser.InformacionContext context)
+		public class recipes
+		{
+			int id_recipes;
+			string name = "";
+			int portions;
+			int? prep_time;//nulls
+			string? prep_time_unit;//nulls
+			int? cook_time;//nulls
+			string? cook_time_unit;//nulls
+			int calories;
+
+		}
+
+		public class ingredients
+		{
+			int id_ingredientes;
+			int recipe_id;
+			string name = "";
+			decimal quantity;
+			int? unit_id;
+		}
+
+		public class cooking_steps
+		{
+			int id_CS;
+			int step_number;
+			string description = "";
+		}
+
+		public class ingredient_units
+		{
+			int id;
+			string text = "";
+		}
+		public override string VisitInformacion([NotNull] ProyectoRecetarioParser.InformacionContext context)
         {
             return base.VisitInformacion(context);
         }
