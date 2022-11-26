@@ -51,9 +51,18 @@ namespace RecetaParser
 
         internal class cooking_steps
         {
+            public cooking_steps(int id_CS, int step_number, string description, int recipe_id)
+                => (this.id_CS, this.step_number, this.description, this.recipe_id) = (id_CS, step_number, description, recipe_id); 
+
             public int id_CS;
             public int step_number;
             public string description = "";
+            public int recipe_id;
+
+            public string ObtenerInsert()
+            {
+                return ($"INSERT INTO cooking_steps (id, recipe_id, step_number, description, recipe_id) VALUES ({id_CS}, {step_number}, {description}, {recipe_id});");
+            }
         }
 
         internal class ingredient_units
