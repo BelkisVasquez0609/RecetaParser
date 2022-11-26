@@ -10,8 +10,11 @@ namespace RecetaParser
 {
     internal class AnalizadorReceta : ProyectoRecetarioBaseVisitor<string>
     {
-        public class recipes
+        internal class recipes
         {
+            public recipes(int id_recipes, string name, int portions, int calories, int? prep_time = 0, string? prep_time_unit = "", int? cook_time = 0, string? cook_time_unit = "")
+            => (this.id_recipes, this.name, this.portions, this.prep_time_unit,this.prep_time_unit,this.cook_time,this.cook_time_unit,this.calories) = (id_recipes, name, portions, prep_time_unit,prep_time_unit,cook_time, cook_time_unit, calories);
+
             public int id_recipes;
             public string name = "";
             public int portions;
@@ -20,10 +23,17 @@ namespace RecetaParser
             public int? cook_time;//nulls
             public string? cook_time_unit;//nulls
             public int calories;
+
+            public string ObtenerInsert()
+            {
+                return ($"INSERT INTO recipes (id, name, portions, prep_time, prep_time_unit, cook_time, cook_time_unit, calories)"+
+                        $"VALUES({id_recipes}, {name}, {portions}, {prep_time}, {prep_time_unit}, {cook_time}, {cook_time_unit}, {calories}); ");
+            }
         }
 
-        public class ingredients
+        internal class ingredients
         {
+            //INSERT INTO ingredients(id, recipe_id, name, quantity, unit_id) VALUES(1, 1, 'leche evaporada', 2.5, 3);
             public int id_ingredientes;
             public int recipe_id;
             public string name = "";
@@ -31,33 +41,30 @@ namespace RecetaParser
             public int? unit_id;
         }
 
-        public class cooking_steps
+        internal class cooking_steps
         {
             public int id_CS;
             public int step_number;
             public string description = "";
         }
 
-        public class ingredient_units
+        internal class ingredient_units
         {
             public int id;
             public string text = "";
         }
+        public override string VisitCalorias([NotNull] ProyectoRecetarioParser.CaloriasContext context)
+        {
+            return base.VisitCalorias(context);
+        }
 
         public override string VisitDet_elaboracion([NotNull] ProyectoRecetarioParser.Det_elaboracionContext context)
         {
-            cooking_steps step = new cooking_steps();
-            step.step_number = Convert.ToInt32(context.NUM().GetText());
-            step.description = context.TEXT().GetText();
             return base.VisitDet_elaboracion(context);
         }
 
         public override string VisitDet_ingredientes([NotNull] ProyectoRecetarioParser.Det_ingredientesContext context)
         {
-            ingredients ingr = new ingredients();
-            ingr.name = context.TEXT().GetText();
-            ingr.quantity = Convert.ToInt32(context.NUM().GetText());
-
             return base.VisitDet_ingredientes(context);
         }
 
@@ -71,6 +78,16 @@ namespace RecetaParser
             return base.VisitIngredientes(context);
         }
 
+        public override string VisitNombre([NotNull] ProyectoRecetarioParser.NombreContext context)
+        {
+            return base.VisitNombre(context);
+        }
+
+        public override string VisitPorciones([NotNull] ProyectoRecetarioParser.PorcionesContext context)
+        {
+            return base.VisitPorciones(context);
+        }
+
         public override string VisitProgram([NotNull] ProyectoRecetarioParser.ProgramContext context)
         {
             return base.VisitProgram(context);
@@ -78,15 +95,17 @@ namespace RecetaParser
 
         public override string VisitReceta([NotNull] ProyectoRecetarioParser.RecetaContext context)
         {
-            recipes receta = new recipes();
-            receta.name = context.nombre().GetText();
-            receta.portions = Convert.ToInt32(context.porciones().GetText());
-            receta.prep_time = Convert.ToInt32(context.tiempoPreparacion().NUM().GetText());
-            receta.prep_time_unit = context.tiempoPreparacion().TEXT().GetText();
-            receta.cook_time = Convert.ToInt32(context.tiempoCoccion().NUM().GetText());
-            receta.cook_time_unit = context.tiempoCoccion().TEXT().GetText();
-            receta.calories = Convert.ToInt32(context.calorias().GetText());
             return base.VisitReceta(context);
+        }
+
+        public override string VisitTiempoCoccion([NotNull] ProyectoRecetarioParser.TiempoCoccionContext context)
+        {
+            return base.VisitTiempoCoccion(context);
+        }
+
+        public override string VisitTiempoPreparacion([NotNull] ProyectoRecetarioParser.TiempoPreparacionContext context)
+        {
+            return base.VisitTiempoPreparacion(context);
         }
     }
 }
