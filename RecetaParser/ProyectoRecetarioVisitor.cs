@@ -44,12 +44,6 @@ public interface IProyectoRecetarioVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitReceta([NotNull] ProyectoRecetarioParser.RecetaContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="ProyectoRecetarioParser.informacion"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitInformacion([NotNull] ProyectoRecetarioParser.InformacionContext context);
-	/// <summary>
 	/// Visit a parse tree produced by <see cref="ProyectoRecetarioParser.nombre"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

@@ -3,8 +3,7 @@ grammar ProyectoRecetario;
 //Parsing rules 
 
 program: (receta)+ EOF;
-receta : nombre (informacion)+;
-informacion: porciones tiempoPreparacion? tiempoCoccion? calorias ingredientes elaboracion;
+receta : nombre porciones tiempoPreparacion? tiempoCoccion? calorias ingredientes elaboracion;
 nombre: GUION REC_LBL SEP TEXT SP?;
 porciones: GUION POR_LBL SEP NUM TEXT SP?;
 tiempoPreparacion: GUION TIEMP_PREP_LBL SEP NUM TEXT SP?;
@@ -19,7 +18,7 @@ det_elaboracion: NUM PAR TEXT;
 
 //Lexer Rules:
 
-REC_LBL: 'RECETA';
+REC_LBL: 'RECETA' ;
 POR_LBL: 'PORCIONES';
 TIEMP_PREP_LBL: 'TIEMPO PREPARACION';
 TIEMP_COC_LBL: 'TIEMPO COCCION';
