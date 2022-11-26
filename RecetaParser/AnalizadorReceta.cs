@@ -33,12 +33,20 @@ namespace RecetaParser
 
         internal class ingredients
         {
-            //INSERT INTO ingredients(id, recipe_id, name, quantity, unit_id) VALUES(1, 1, 'leche evaporada', 2.5, 3);
+            public ingredients(int id_ingredientes, int recipe_id, string name, decimal quantity, int? unit_id)
+                => (this.id_ingredientes, this.recipe_id, this.name, this.quantity, this.unit_id) = (id_ingredientes, recipe_id, name, quantity, unit_id);
+
             public int id_ingredientes;
             public int recipe_id;
             public string name = "";
             public decimal quantity;
             public int? unit_id;
+
+            public string ObtenerInsert()
+            {
+                return ($"INSERT INTO ingredients(id, recipe_id, name, quantity, unit_id)" +
+                    $"VALUES({id_ingredientes}, {recipe_id}, {name}, {quantity}, {unit_id});");
+            }
         }
 
         internal class cooking_steps
