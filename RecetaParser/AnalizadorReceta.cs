@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 
 namespace RecetaParser
@@ -24,8 +25,10 @@ namespace RecetaParser
 
         public string ObtenerInsert()
         {
-            return ($"INSERT INTO recipes (id, name, portions, prep_time, prep_time_unit, cook_time, cook_time_unit, calories)" +
-                    $"VALUES({id_recipes}, '{name}', {portions}, {prep_time}, '{prep_time_unit}', {cook_time}, '{cook_time_unit}', {calories}); \n");
+            return ($"/*-------------------------------RECIPE: {name} ---------------------------------------------*/\n" +
+                    $"\nINSERT INTO recipes (id, name, portions, prep_time, prep_time_unit, cook_time, cook_time_unit, calories)" +
+                    $"VALUES({id_recipes}, '{name}', {portions}, {prep_time}, '{prep_time_unit}', {cook_time}, '{cook_time_unit}', {calories}); \n"+
+					$"\n/*********************************** INGREDIENTS *********************************************/\n");
         }
     }
     internal class ingredients
@@ -41,7 +44,8 @@ namespace RecetaParser
 
         public string ObtenerInsert()
         {
-            return ($"INSERT INTO ingredients(id, recipe_id, name, quantity, unit_id)" +
+            return ( 
+				$"INSERT INTO ingredients(id, recipe_id, name, quantity, unit_id)" +
                 $"VALUES({id_ingredientes}, {recipe_id}, '{name}', {quantity}, {unit_id});\n");
         }
     }
@@ -57,7 +61,17 @@ namespace RecetaParser
 
         public string ObtenerInsert()
         {
-            return ($"INSERT INTO cooking_steps (id, step_number, description, recipe_id) VALUES ({id_CS}, {step_number}, '{description}', {recipe_id});\n");
+     
+            if (step_number == 1)
+            {
+				return ($"/*================================== Cooking Steps =======================================*/\n" +
+					$"\nINSERT INTO cooking_steps (id, step_number, description, recipe_id) VALUES ({id_CS}, {step_number}, '{description}', {recipe_id});\n");
+			}
+            else
+            {
+				return ($"INSERT INTO cooking_steps (id, step_number, description, recipe_id) VALUES ({id_CS}, {step_number}, '{description}', {recipe_id});\n");
+			}
+
         }
     }
 
@@ -83,17 +97,29 @@ namespace RecetaParser
         }
         public override object VisitProgram([NotNull] ProyectoRecetarioParser.ProgramContext context)
         {
-            base.VisitProgram(context);
-            string insertResult = "";
-            foreach (var i in outPut)
+			string insertResult = "";
+			try
+			{
+				base.VisitProgram(context);
+         
+                foreach (var i in outPut)
                 insertResult += i + "\n";
+			}
+			catch (Exception ex)
+			{
 
-            return insertResult;
-        }
+				Console.WriteLine("Method VisitProgram exception - " + ex.Message);
+			}
+
+			return insertResult;
+		}
 
         public override object VisitReceta([NotNull] ProyectoRecetarioParser.RecetaContext context)
         {
+            try
+            {
 
+           
             recipeCount++;
             string name = (string)Visit(context.nombre());
             int portions = (int)Visit(context.porciones());
@@ -143,19 +169,48 @@ namespace RecetaParser
                 step.recipe_id = receta.id_recipes;
                 outPut.Add(step.ObtenerInsert());
             }
-            return new Object();
-        }
+            
+			}
+			catch (Exception ex)
+			{
+
+				Console.WriteLine("Method VisitReceta exception - "+ ex.Message);
+			}
+			return new Object();
+		}
         public override object VisitCalorias([NotNull] ProyectoRecetarioParser.CaloriasContext context)
         {
-            return Convert.ToInt32(context.NUM().GetText());
+            int? Calories;
+            try
+            {
+                Calories = Convert.ToInt32(context.NUM().GetText());
+
+			}
+            catch (Exception ex)
+            {
+                Calories = 0;
+				Console.WriteLine("Method VisitCalorias exception - " + ex.Message);
+			}
+            return Calories;
         }
         public override object VisitDet_elaboracion([NotNull] ProyectoRecetarioParser.Det_elaboracionContext context)
         {
             stepCount++;
-            int stepNumber = Convert.ToInt32(context.NUM().GetText());
-            string stepDescription = context.TEXT().GetText();
-            cooking_steps cookingSteps = new cooking_steps(stepCount,stepNumber,stepDescription);
-            return cookingSteps;
+            cooking_steps cookingSteps;
+
+			try
+            {
+				int stepNumber = Convert.ToInt32(context.NUM().GetText());
+				string stepDescription = context.TEXT().GetText();
+				cookingSteps = new cooking_steps(stepCount, stepNumber, stepDescription);
+			}
+			catch (Exception ex)
+			{
+                cookingSteps = null;
+				Console.WriteLine("Method VisitDet_elaboracion exception - " + ex.Message);
+			}
+
+			return cookingSteps;
 		}
 		public override object VisitDet_ingredientes([NotNull] ProyectoRecetarioParser.Det_ingredientesContext context)
         {
