@@ -64,8 +64,9 @@ namespace RecetaParser
     internal class AnalizadorReceta : ProyectoRecetarioBaseVisitor<object>
     {
         private int ingCount = 0;
+		private int stepCount = 0;
 
-        public override object VisitNombre([NotNull] ProyectoRecetarioParser.NombreContext context)
+		public override object VisitNombre([NotNull] ProyectoRecetarioParser.NombreContext context)
         {   
             return context.TEXT().GetText();
         }
@@ -98,10 +99,13 @@ namespace RecetaParser
         }
         public override object VisitDet_elaboracion([NotNull] ProyectoRecetarioParser.Det_elaboracionContext context)
         {
-            return base.VisitDet_elaboracion(context);
-        }
-
-        public override object VisitDet_ingredientes([NotNull] ProyectoRecetarioParser.Det_ingredientesContext context)
+            stepCount++;
+            int stepNumber = Convert.ToInt32(context.NUM().GetText());
+            string stepDescription = context.TEXT().GetText();
+            cooking_steps cookingSteps = new cooking_steps(stepCount,stepNumber,stepDescription);
+            return cookingSteps;
+		}
+		public override object VisitDet_ingredientes([NotNull] ProyectoRecetarioParser.Det_ingredientesContext context)
         {
             decimal quantity = decimal.Parse(context.NUM().GetText());
             string name = context.TEXT().GetText();
@@ -126,13 +130,23 @@ namespace RecetaParser
 
         public override object VisitElaboracion([NotNull] ProyectoRecetarioParser.ElaboracionContext context)
         {
-            return base.VisitElaboracion(context);
-        }
+			List<cooking_steps> cookingStep = new List<cooking_steps>();
+			foreach (var cookingStepTree in context.det_elaboracion())
+			{
+				cookingStep.Add((cooking_steps)Visit(cookingStepTree));
+			}
+			return cookingStep;
+		}
 
         public override object VisitIngredientes([NotNull] ProyectoRecetarioParser.IngredientesContext context)
         {
-            return base.VisitIngredientes(context);
-        }
+			List<ingredients> ingredientes = new List<ingredients>();
+			foreach (var ingrediente_tree in context.det_ingredientes())
+			{
+				ingredientes.Add((ingredients)Visit(ingrediente_tree));
+			}
+			return ingredientes;
+		}
 
     }
 }
