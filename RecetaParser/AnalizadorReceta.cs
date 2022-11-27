@@ -81,15 +81,15 @@ namespace RecetaParser
         {   
             return Convert.ToInt32(context.NUM().GetText());
         }
-        public override object VisitTiempoCoccion([Nullable]ProyectoRecetarioParser.TiempoCoccionContext context)
-        {   
-            return Convert.ToInt32(context.NUM().GetText());
-        }
+        //public override object VisitTiempoCoccion([Nullable]ProyectoRecetarioParser.TiempoCoccionContext context)
+        //{   
+        //    return Convert.ToInt32(context.NUM().GetText());
+        //}
 
-        public override object VisitTiempoPreparacion([Nullable]ProyectoRecetarioParser.TiempoPreparacionContext context)
-        {  
-            return Convert.ToInt32(context.NUM().GetText());
-        }
+        //public override object VisitTiempoPreparacion([Nullable]ProyectoRecetarioParser.TiempoPreparacionContext context)
+        //{  
+        //    return Convert.ToInt32(context.NUM().GetText());
+        //}
         public override object VisitProgram([NotNull] ProyectoRecetarioParser.ProgramContext context)
         {
             base.VisitProgram(context);
@@ -106,11 +106,33 @@ namespace RecetaParser
             recipeCount++;
             string name = (string)Visit(context.nombre());
             int portions = (int)Visit(context.porciones());
-            int calorias = (int)Visit(context.calorias());
-            int? prep_time = (int)Visit(context.tiempoPreparacion());
-            string? prep_time_unit = (string)Visit(context.tiempoPreparacion().TEXT());
-            int? cook_time = (int)Visit(context.tiempoCoccion());
-            string? cook_time_unit = (string)Visit(context.tiempoCoccion().TEXT());
+            int calorias = Convert.ToInt32(Visit(context.calorias()));
+            int? prep_time;
+            string? prep_time_unit;
+            int? cook_time;
+            string? cook_time_unit;
+			if (context.tiempoPreparacion() != null)
+            {
+				prep_time = Convert.ToInt32(context.tiempoPreparacion().NUM().GetText());
+				prep_time_unit = (string)context.tiempoPreparacion().TEXT().GetText();
+			}
+            else
+            {
+                prep_time = 0;
+                prep_time_unit = "No especifica";
+
+			}
+            if (context.tiempoCoccion() != null)
+            {
+				cook_time = Convert.ToInt32(context.tiempoCoccion().NUM().GetText());
+				cook_time_unit = (string)context.tiempoCoccion().TEXT().GetText();
+			}
+            else
+            {
+                cook_time = 0;
+				cook_time_unit = "No especifica";
+
+			}
 
             recipes receta = new recipes(recipeCount, name, portions, calorias, prep_time, prep_time_unit, cook_time, cook_time_unit);
             List<ingredients> ingredients = (List<ingredients>)Visit(context.ingredientes());
