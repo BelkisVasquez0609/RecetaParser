@@ -11,7 +11,7 @@ namespace RecetaParser
     internal class recipes
     {
         public recipes(int id_recipes, string name, int portions, int calories, int? prep_time = 0, string? prep_time_unit = "", int? cook_time = 0, string? cook_time_unit = "")
-        => (this.id_recipes, this.name, this.portions, this.prep_time_unit, this.prep_time_unit, this.cook_time, this.cook_time_unit, this.calories) = (id_recipes, name, portions, prep_time_unit, prep_time_unit, cook_time, cook_time_unit, calories);
+        => (this.id_recipes, this.name, this.portions, this.calories, this.prep_time, this.prep_time_unit, this.cook_time, this.cook_time_unit) = (id_recipes, name, portions, calories, prep_time, prep_time_unit, cook_time, cook_time_unit);
 
         public int id_recipes;
         public string name = "";
