@@ -25,7 +25,7 @@ namespace RecetaParser
         public string ObtenerInsert()
         {
             return ($"INSERT INTO recipes (id, name, portions, prep_time, prep_time_unit, cook_time, cook_time_unit, calories)" +
-                    $"VALUES({id_recipes}, {name}, {portions}, {prep_time}, {prep_time_unit}, {cook_time}, {cook_time_unit}, {calories}); ");
+                    $"VALUES({id_recipes}, '{name}', {portions}, {prep_time}, '{prep_time_unit}', {cook_time}, '{cook_time_unit}', {calories}); \n");
         }
     }
     internal class ingredients
@@ -42,7 +42,7 @@ namespace RecetaParser
         public string ObtenerInsert()
         {
             return ($"INSERT INTO ingredients(id, recipe_id, name, quantity, unit_id)" +
-                $"VALUES({id_ingredientes}, {recipe_id}, {name}, {quantity}, {unit_id});");
+                $"VALUES({id_ingredientes}, {recipe_id}, '{name}', {quantity}, {unit_id});\n");
         }
     }
     internal class cooking_steps
@@ -57,7 +57,7 @@ namespace RecetaParser
 
         public string ObtenerInsert()
         {
-            return ($"INSERT INTO cooking_steps (id, recipe_id, step_number, description, recipe_id) VALUES ({id_CS}, {step_number}, {description}, {recipe_id});");
+            return ($"INSERT INTO cooking_steps (id, step_number, description, recipe_id) VALUES ({id_CS}, {step_number}, '{description}', {recipe_id});\n");
         }
     }
 
@@ -81,15 +81,6 @@ namespace RecetaParser
         {   
             return Convert.ToInt32(context.NUM().GetText());
         }
-        //public override object VisitTiempoCoccion([Nullable]ProyectoRecetarioParser.TiempoCoccionContext context)
-        //{   
-        //    return Convert.ToInt32(context.NUM().GetText());
-        //}
-
-        //public override object VisitTiempoPreparacion([Nullable]ProyectoRecetarioParser.TiempoPreparacionContext context)
-        //{  
-        //    return Convert.ToInt32(context.NUM().GetText());
-        //}
         public override object VisitProgram([NotNull] ProyectoRecetarioParser.ProgramContext context)
         {
             base.VisitProgram(context);
