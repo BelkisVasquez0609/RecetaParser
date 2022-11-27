@@ -65,6 +65,12 @@ namespace RecetaParser
     {
         private int ingCount = 0;
 		private int stepCount = 0;
+        private int recipeCount = 0;
+        List<string> outPut = new List<string>();
+        public List<string> OutPut
+        {
+            get => outPut;
+        }
 
 		public override object VisitNombre([NotNull] ProyectoRecetarioParser.NombreContext context)
         {   
@@ -91,7 +97,35 @@ namespace RecetaParser
 
         public override object VisitReceta([NotNull] ProyectoRecetarioParser.RecetaContext context)
         {
-            return base.VisitReceta(context);
+
+            recipeCount++;
+            string name = (string)Visit(context.nombre());
+            int portions = (int)Visit(context.porciones());
+            int calorias = (int)Visit(context.calorias());
+            int? prep_time = (int)Visit(context.tiempoPreparacion());
+            string? prep_time_unit = (string)Visit(context.tiempoPreparacion().TEXT());
+            int? cook_time = (int)Visit(context.tiempoCoccion());
+            string? cook_time_unit = (string)Visit(context.tiempoCoccion().TEXT());
+
+            recipes receta = new recipes(recipeCount, name, portions, calorias, prep_time, prep_time_unit, cook_time, cook_time_unit);
+            List<ingredients> ingredients = (List<ingredients>)Visit(context.ingredientes());
+            List<cooking_steps> cooking_steps = (List<cooking_steps>)Visit(context.elaboracion());
+
+
+            outPut.Add(receta.ObtenerInsert());
+
+            foreach (var ingredient in ingredients)
+            {
+                ingredient.recipe_id = receta.id_recipes;
+                outPut.Add(ingredient.ObtenerInsert());
+
+            }
+            foreach (var step in cooking_steps)
+            {
+                step.recipe_id = receta.id_recipes;
+                outPut.Add(step.ObtenerInsert());
+            }
+            return new Object();
         }
         public override object VisitCalorias([NotNull] ProyectoRecetarioParser.CaloriasContext context)
         {
