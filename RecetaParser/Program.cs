@@ -1,5 +1,6 @@
 ﻿using Antlr4.Runtime;
 using RecetaParser;
+using static RecetaParser.AnalizadorReceta;
 
 var input = CharStreams.fromPath(@"..\..\..\Recetario.txt");
 
@@ -8,5 +9,5 @@ var tokenStream = new CommonTokenStream(lexer);
 var parser = new ProyectoRecetarioParser(tokenStream); 
 var tree = parser.program();
 
-var visitor = new AnalizadorReceta();
-visitor.Visit(tree);
+AnalizadorReceta recetaToSQL = new AnalizadorReceta();
+Console.WriteLine(recetaToSQL.Visit(tree));

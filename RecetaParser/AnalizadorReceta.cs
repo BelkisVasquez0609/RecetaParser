@@ -79,20 +79,25 @@ namespace RecetaParser
 
         public override object VisitPorciones([NotNull] ProyectoRecetarioParser.PorcionesContext context)
         {   
-            return context.NUM().GetText();
+            return Convert.ToInt32(context.NUM().GetText());
         }
         public override object VisitTiempoCoccion([NotNull] ProyectoRecetarioParser.TiempoCoccionContext context)
         {   
-            return context.NUM().GetText();
+            return Convert.ToInt32(context.NUM().GetText());
         }
 
         public override object VisitTiempoPreparacion([NotNull] ProyectoRecetarioParser.TiempoPreparacionContext context)
         {  
-            return context.NUM().GetText();
+            return Convert.ToInt32(context.NUM().GetText());
         }
         public override object VisitProgram([NotNull] ProyectoRecetarioParser.ProgramContext context)
         {
-            return base.VisitProgram(context);
+            base.VisitProgram(context);
+            string insertResult = "";
+            foreach (var i in outPut)
+                insertResult += i + "\n";
+
+            return insertResult;
         }
 
         public override object VisitReceta([NotNull] ProyectoRecetarioParser.RecetaContext context)
