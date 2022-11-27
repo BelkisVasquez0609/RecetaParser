@@ -60,11 +60,6 @@ namespace RecetaParser
             return ($"INSERT INTO cooking_steps (id, recipe_id, step_number, description, recipe_id) VALUES ({id_CS}, {step_number}, {description}, {recipe_id});");
         }
     }
-    internal class ingredient_units
-    {
-        public int id;
-        public string text = "";
-    }
 
     internal class AnalizadorReceta : ProyectoRecetarioBaseVisitor<object>
     {
