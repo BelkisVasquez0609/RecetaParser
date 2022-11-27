@@ -81,12 +81,12 @@ namespace RecetaParser
         {   
             return Convert.ToInt32(context.NUM().GetText());
         }
-        public override object VisitTiempoCoccion([NotNull] ProyectoRecetarioParser.TiempoCoccionContext context)
+        public override object VisitTiempoCoccion([Nullable]ProyectoRecetarioParser.TiempoCoccionContext context)
         {   
             return Convert.ToInt32(context.NUM().GetText());
         }
 
-        public override object VisitTiempoPreparacion([NotNull] ProyectoRecetarioParser.TiempoPreparacionContext context)
+        public override object VisitTiempoPreparacion([Nullable]ProyectoRecetarioParser.TiempoPreparacionContext context)
         {  
             return Convert.ToInt32(context.NUM().GetText());
         }
@@ -134,7 +134,7 @@ namespace RecetaParser
         }
         public override object VisitCalorias([NotNull] ProyectoRecetarioParser.CaloriasContext context)
         {
-            return context.NUM().GetText();
+            return Convert.ToInt32(context.NUM().GetText());
         }
         public override object VisitDet_elaboracion([NotNull] ProyectoRecetarioParser.Det_elaboracionContext context)
         {
