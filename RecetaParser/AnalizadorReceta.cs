@@ -11,23 +11,23 @@ namespace RecetaParser
 {
     internal class recipes
     {
-        public recipes(int id_recipes, string name, int portions, int calories, int? prep_time = 0, string? prep_time_unit = "", int? cook_time = 0, string? cook_time_unit = "")
+        public recipes(int id_recipes, string name, int portions, int calories, string? prep_time = "", string? prep_time_unit = "", string? cook_time = "", string? cook_time_unit = "")
         => (this.id_recipes, this.name, this.portions, this.calories, this.prep_time, this.prep_time_unit, this.cook_time, this.cook_time_unit) = (id_recipes, name, portions, calories, prep_time, prep_time_unit, cook_time, cook_time_unit);
 
         public int id_recipes;
         public string name = "";
         public int portions;
-        public int? prep_time;//nulls
+        public string? prep_time;//nulls
         public string? prep_time_unit;//nulls
-        public int? cook_time;//nulls
+        public string? cook_time;//nulls
         public string? cook_time_unit;//nulls
         public int calories;
 
         public string ObtenerInsert()
         {
             return ($"/*-------------------------------RECIPE: {name} ---------------------------------------------*/\n" +
-                    $"\nINSERT INTO recipes (id, name, portions, prep_time, prep_time_unit, cook_time, cook_time_unit, calories)" +
-                    $"VALUES({id_recipes}, '{name}', {portions}, {prep_time}, '{prep_time_unit}', {cook_time}, '{cook_time_unit}', {calories}); \n"+
+                    $"\nINSERT INTO recipes (id, name, portions, {(prep_time is not null ? "prep_time," : "")} {(prep_time_unit is not null ? "prep_time_unit," : "")} {(cook_time is not null ? "cook_time," : "")} {(cook_time_unit is not null ? "cook_time_unit," : "")} calories)" +
+                    $"VALUES({id_recipes}, '{name}', {portions}, {(prep_time is not null ? $"{prep_time}," : "")} {(prep_time is not null ? $"'{prep_time_unit}'," : "")} {(prep_time is not null ? $"{cook_time}," : "")}  {(prep_time is not null ? $"'{cook_time_unit}'," : "")}{calories}); \n"+
 					$"\n/*********************************** INGREDIENTS *********************************************/\n");
         }
     }
@@ -124,32 +124,17 @@ namespace RecetaParser
             string name = (string)Visit(context.nombre());
             int portions = (int)Visit(context.porciones());
             int calorias = Convert.ToInt32(Visit(context.calorias()));
-            int? prep_time;
+				string? prep_time;
             string? prep_time_unit;
-            int? cook_time;
+				string? cook_time;
             string? cook_time_unit;
-			if (context.tiempoPreparacion() != null)
-            {
-				prep_time = Convert.ToInt32(context.tiempoPreparacion().NUM().GetText());
-				prep_time_unit = (string)context.tiempoPreparacion().TEXT().GetText();
-			}
-            else
-            {
-                prep_time = 0;
-                prep_time_unit = "No especifica";
+		
+				prep_time = (string?)context.tiempoPreparacion()?.NUM().GetText();
+				prep_time_unit = (string?)context.tiempoPreparacion()?.TEXT().GetText();
 
-			}
-            if (context.tiempoCoccion() != null)
-            {
-				cook_time = Convert.ToInt32(context.tiempoCoccion().NUM().GetText());
-				cook_time_unit = (string)context.tiempoCoccion().TEXT().GetText();
-			}
-            else
-            {
-                cook_time = 0;
-				cook_time_unit = "No especifica";
+				cook_time = (string?)context.tiempoCoccion()?.NUM().GetText();
+				cook_time_unit = (string?)context.tiempoCoccion()?.TEXT().GetText();
 
-			}
 
             recipes receta = new recipes(recipeCount, name, portions, calorias, prep_time, prep_time_unit, cook_time, cook_time_unit);
             List<ingredients> ingredients = (List<ingredients>)Visit(context.ingredientes());
